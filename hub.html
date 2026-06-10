@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE HUB — Digital Ecosystem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #04040E;
+  --bg-card: rgba(8, 8, 28, 0.75);
+  --violet: #8B5CF6;
+  --cyan: #06B6D4;
+  --pink: #EC4899;
+  --amber: #F59E0B;
+  --green: #10B981;
+  --indigo: #818CF8;
+  --red: #F87171;
+  --text: #EEF0FF;
+  --text-sub: #94A3B8;
+  --text-dim: #4B5563;
+  --glass-border: rgba(139,92,246,0.18);
+  --glass-border-hover: rgba(139,92,246,0.55);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── BACKGROUND LAYERS ─── */
+#stars-canvas {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
+
+.aurora-layer {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none; overflow: hidden;
+}
+.aurora-layer::before {
+  content: '';
+  position: absolute;
+  width: 900px; height: 900px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,92,246,0.09) 0%, transparent 68%);
+  top: -200px; left: -200px;
+  animation: orb1 20s ease-in-out infinite alternate;
+}
+.aurora-layer::after {
+  content: '';
+  position: absolute;
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 68%);
+  bottom: -150px; right: -100px;
+  animation: orb2 24s ease-in-out infinite alternate;
+}
+.aurora-extra {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+}
+.aurora-extra::before {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(236,72,153,0.055) 0%, transparent 68%);
+  top: 40%; left: 55%;
+  animation: orb3 28s ease-in-out infinite alternate;
+}
+
+@keyframes orb1 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(80px,60px) scale(1.1); } }
+@keyframes orb2 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-70px,-50px) scale(1.12); } }
+@keyframes orb3 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(60px,80px) scale(0.9); } }
+
+/* Grid overlay */
+.grid-overlay {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(139,92,246,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,92,246,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ─── LAYOUT ─── */
+.container {
+  position: relative; z-index: 1;
+  max-width: 1180px; margin: 0 auto; padding: 0 28px;
+}
+
+/* ─── HERO ─── */
+.hero { text-align: center; padding: 100px 0 56px; }
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.35em;
+  color: var(--cyan); text-transform: uppercase;
+  margin-bottom: 24px;
+  opacity: 0; animation: fadeUp .8s ease forwards .2s;
+}
+
+.title-wrap { margin-bottom: 28px; }
+
+.hero-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  font-weight: 900; line-height: 1;
+  letter-spacing: 0.03em;
+  background: linear-gradient(140deg, #EEF0FF 20%, #A78BFA 50%, #06B6D4 80%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0; animation: fadeUp .8s ease forwards .4s;
+  position: relative; display: inline-block;
+}
+
+.hero-title::after {
+  content: 'THE HUB';
+  position: absolute; top: 0; left: 0;
+  background: linear-gradient(140deg, #EEF0FF 20%, #A78BFA 50%, #06B6D4 80%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glitch 9s steps(1) infinite 4s;
+  pointer-events: none;
+}
+
+.hero-sub {
+  font-size: 1.05rem; color: var(--text-sub);
+  max-width: 560px; margin: 0 auto 14px;
+  line-height: 1.75; font-weight: 300;
+  opacity: 0; animation: fadeUp .8s ease forwards .65s;
+}
+
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--text-dim);
+  letter-spacing: 0.15em;
+  opacity: 0; animation: fadeUp .8s ease forwards .85s;
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  display: flex; align-items: center; gap: 14px;
+  max-width: 320px; margin: 0 auto 56px;
+  opacity: 0; animation: fadeUp .8s ease forwards 1.05s;
+}
+.divider-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--violet), transparent);
+}
+.divider-gem {
+  width: 8px; height: 8px; transform: rotate(45deg);
+  background: var(--violet);
+  box-shadow: 0 0 12px var(--violet), 0 0 24px rgba(139,92,246,.4);
+  animation: gemPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes gemPulse {
+  0%, 100% { transform: rotate(45deg) scale(1); opacity: 1; }
+  50% { transform: rotate(45deg) scale(1.4); opacity: .6; }
+}
+
+/* ─── SECTION LABEL ─── */
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.3em;
+  color: var(--text-dim); text-transform: uppercase;
+  text-align: center; margin-bottom: 36px;
+  opacity: 0; animation: fadeUp .8s ease forwards 1.2s;
+}
+
+/* ─── CARDS GRID ─── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px; padding-bottom: 100px;
+}
+
+/* ─── CARD ─── */
+.card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 30px 28px 26px;
+  text-decoration: none;
+  display: block; overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  opacity: 0; transform: translateY(32px);
+  cursor: pointer;
+  transition:
+    opacity .55s ease,
+    transform .55s cubic-bezier(.34,1.56,.64,1),
+    border-color .3s ease,
+    box-shadow .3s ease;
+}
+
+.card.visible { opacity: 1; transform: translateY(0); }
+
+/* Glow frame on hover */
+.card::before {
+  content: '';
+  position: absolute; inset: -1px; border-radius: 19px;
+  background: linear-gradient(135deg, var(--c1, #8B5CF6), var(--c2, #06B6D4));
+  z-index: -1; opacity: 0;
+  transition: opacity .35s ease;
+}
+
+/* Shimmer sweep */
+.card::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: 18px;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.055) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform .65s ease;
+  pointer-events: none; z-index: 2;
+}
+
+.card:hover::before { opacity: .7; }
+.card:hover::after { transform: translateX(100%); }
+.card:hover {
+  transform: translateY(-7px) scale(1.015);
+  border-color: transparent;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+}
+
+/* Scan line effect */
+.scan-line {
+  position: absolute; left: 0; width: 100%; height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(139,92,246,.03), transparent);
+  top: -80px; animation: scanMove 5s linear infinite;
+  pointer-events: none; z-index: 1;
+}
+
+@keyframes scanMove { 0% { top: -80px; } 100% { top: 110%; } }
+
+/* Card inner */
+.card-inner { position: relative; z-index: 3; }
+
+.card-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 22px;
+}
+
+.card-icon {
+  width: 52px; height: 52px;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; line-height: 1;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.07);
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease;
+}
+
+.card:hover .card-icon {
+  transform: rotate(-8deg) scale(1.15);
+  box-shadow: 0 0 22px var(--glow, rgba(139,92,246,.5));
+}
+
+.card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--text-dim); letter-spacing: .2em;
+  margin-top: 6px;
+}
+
+.card-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: .95rem; font-weight: 700;
+  letter-spacing: .06em; color: var(--text);
+  margin-bottom: 9px;
+}
+
+.card-desc {
+  font-size: .84rem; color: var(--text-sub);
+  line-height: 1.65; font-weight: 300;
+  margin-bottom: 22px; min-height: 52px;
+}
+
+.card-cta {
+  display: flex; align-items: center; gap: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem; letter-spacing: .1em;
+  color: var(--text-dim);
+  transition: color .3s ease, gap .3s ease;
+}
+
+.card:hover .card-cta { color: var(--cyan); gap: 11px; }
+
+.cta-arrow {
+  display: inline-block;
+  transition: transform .3s ease;
+}
+.card:hover .cta-arrow { transform: translateX(5px); }
+
+/* ─── STATUS BAR ─── */
+.status-bar {
+  position: relative; z-index: 1;
+  border-top: 1px solid rgba(255,255,255,.05);
+  padding: 18px 0 20px;
+  display: flex; align-items: center;
+  justify-content: center; gap: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--text-dim); letter-spacing: .2em;
+  margin-bottom: 0;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: blink 2s ease-in-out infinite;
+  margin-right: 6px; vertical-align: middle;
+}
+
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+
+/* ─── FOOTER ─── */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid rgba(255,255,255,.04);
+  padding: 36px 0 52px;
+  text-align: center;
+}
+
+.footer-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: .75rem; font-weight: 700;
+  letter-spacing: .25em; color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.footer-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: .15em;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glitch {
+  0%, 92%, 100% { clip-path: none; transform: none; opacity: 1; }
+  93%  { clip-path: polygon(0 8%, 100% 8%, 100% 34%, 0 34%); transform: translate(-4px, 0); opacity: .85; }
+  94%  { clip-path: polygon(0 55%, 100% 55%, 100% 72%, 0 72%); transform: translate(4px, 0); opacity: .85; }
+  95%  { clip-path: none; transform: translate(0, 0); opacity: 1; }
+  96%  { clip-path: polygon(0 20%, 100% 20%, 100% 50%, 0 50%); transform: translate(-2px, 1px); opacity: .9; }
+  97%  { clip-path: none; transform: none; opacity: 1; }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 640px) {
+  .hero { padding: 72px 0 40px; }
+  .cards-grid { grid-template-columns: 1fr; gap: 14px; }
+  .status-bar { flex-direction: column; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="aurora-layer"></div>
+<div class="aurora-extra"></div>
+<div class="grid-overlay"></div>
+<canvas id="stars-canvas"></canvas>
+
+<div class="container">
+
+  <!-- ── HERO ── -->
+  <header class="hero">
+    <p class="eyebrow">// digital ecosystem — online command center</p>
+    <div class="title-wrap">
+      <h1 class="hero-title">THE HUB</h1>
+    </div>
+    <p class="hero-sub">A unified digital command center — seamlessly connecting you to every module of our online world. Navigate, explore, and access everything from one place.</p>
+    <p class="hero-tag">[ select a module below to navigate ]</p>
+  </header>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-gem"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <p class="section-label">// available modules — 07 nodes active</p>
+
+  <!-- ── CARDS ── -->
+  <div class="cards-grid">
+
+    <!-- 01 · CLOUD IMAGE -->
+    <a class="card" href="https://akhisweety01-hub.github.io/secure-demo/" target="_blank" rel="noopener noreferrer"
+      style="--c1:#8B5CF6;--c2:#06B6D4;--glow:rgba(139,92,246,.55);">
+      <div class="scan-line"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-icon">☁️</div>
+          <span class="card-num">NODE — 01</span>
+        </div>
+        <h2 class="card-title">CLOUD IMAGE</h2>
+        <p class="card-desc">Secure cloud storage vault. Browse and manage your stored files and folders from anywhere, anytime.</p>
+        <div class="card-cta"><span>OPEN MODULE</span><span class="cta-arrow">→</span></div>
+      </div>
+    </a>
+
+    <!-- 02 · SHOPPING -->
+    <a class="card" href="https://akhisweety01-hub.github.io/shopping/" target="_blank" rel="noopener noreferrer"
+      style="--c1:#EC4899;--c2:#F59E0B;--glow:rgba(236,72,153,.55);">
+      <div class="scan-line" style="animation-delay:0.7s"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-icon">🛍️</div>
+          <span class="card-num">NODE — 02</span>
+        </div>
+        <h2 class="card-title">SHOPPING</h2>
+        <p class="card-desc">Curated shopping experience. Discover and explore handpicked products from a dedicated digital storefront.</p>
+        <div class="card-cta"><span>OPEN MODULE</span><span class="cta-arrow">→</span></div>
+      </div>
+    </a>
+
+    <!-- 03 · ALBUM -->
+    <a class="card" href="https://akhisweety01-hub.github.io/album/" target="_blank" rel="noopener noreferrer"
+      style="--c1:#06B6D4;--c2:#3B82F6;--glow:rgba(6,182,212,.55);">
+      <div class="scan-line" style="animation-delay:1.3s"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-icon">📷</div>
+          <span class="card-num">NODE — 03</span>
+        </div>
+        <h2 class="card-title">ALBUM</h2>
+        <p class="card-desc">Shared photo gallery. A curated collection of precious memories, openly available for everyone to enjoy.</p>
+        <div class="card-cta"><span>OPEN MODULE</span><span class="cta-arrow">→</span></div>
+      </div>
+    </a>
+
+    <!-- 04 · GOODMORNING -->
+    <a class="card" href="https://akhisweety01-hub.github.io/goodmorning/" target="_blank" rel="noopener noreferrer"
+      style="--c1:#F59E0B;--c2:#F87171;--glow:rgba(245,158,11,.55);">
+      <div class="scan-line" style="animation-delay:2s"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-icon">🌅</div>
+          <span class="card-num">NODE — 04</span>
+        </div>
+        <h2 class="card-title">GOOD MORNING</h2>
+        <p class="card-desc">Begin your day with divine blessings. Random inspirational good morning messages paired with the gods' sacred photo.</p>
+        <div class="card-cta"><span>OPEN MODULE</span><span class="cta-arrow">→</span></div>
+      </div>
+    </a>
+
+    <!-- 05 · GOODNIGHT -->
+    <a class="card" href="https://akhisweety01-hub.github.io/goodnight/" target="_blank" rel="noopener noreferrer"
+      style="--c1:#818CF8;--c2:#8B5CF6;--glow:rgba(129,140,248,.55);">
+      <div class="scan-line" style="animation-delay:2.8s"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-icon">🌙</div>
+          <span class="card-num">NODE — 05</span>
+        </div>
+        <h2 class="card-title">GOOD NIGHT</h2>
+        <p class="card-desc">Close your day in peace and serenity. Random good night blessings with beautiful divine imagery for restful sleep.</p>
+        <div class="card-cta"><span>OPEN MODULE</span><span class="cta-arrow">→</span></div>
+      </div>
+    </a>
+
+    <!-- 06 · SECURE TERMINAL -->
+    <a class="card" href="https://akhisweety01-hub.github.io/securefile/" target="_blank" rel="noopener noreferrer"
+      style="--c1:#10B981;--c2:#06B6D4;--glow:rgba(16,185,129,.55);">
+      <div class="scan-line" style="animation-delay:1.6s"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-icon">🖥️</div>
+          <span class="card-num">NODE — 06</span>
+        </div>
+        <h2 class="card-title">SECURE TERMINAL</h2>
+        <p class="card-desc">Encrypted file system access. A secure cloud interface for protected document and photo retrieval.</p>
+        <div class="card-cta"><span>OPEN MODULE</span><span class="cta-arrow">→</span></div>
+      </div>
+    </a>
+
+    <!-- 07 · TECH LOGIN -->
+    <a class="card" href="https://akhisweety01-hub.github.io/login/" target="_blank" rel="noopener noreferrer"
+      style="--c1:#F87171;--c2:#F59E0B;--glow:rgba(248,113,113,.55);">
+      <div class="scan-line" style="animation-delay:3.2s"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-icon">🔐</div>
+          <span class="card-num">NODE — 07</span>
+        </div>
+        <h2 class="card-title">TECH LOGIN</h2>
+        <p class="card-desc">Authenticated access portal. Industry-grade secure login gateway to the core technology system.</p>
+        <div class="card-cta"><span>OPEN MODULE</span><span class="cta-arrow">→</span></div>
+      </div>
+    </a>
+
+  </div><!-- /cards-grid -->
+
+  <!-- ── STATUS BAR ── -->
+  <div class="status-bar">
+    <span><span class="status-dot"></span>ALL SYSTEMS OPERATIONAL</span>
+    <span>// 07 MODULES ACTIVE</span>
+    <span>SECURE CONNECTION</span>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <p class="footer-title">THE HUB — DIGITAL ECOSYSTEM</p>
+    <p class="footer-copy">// built for seamless access &nbsp;·&nbsp; v2.0 &nbsp;·&nbsp; all rights reserved</p>
+  </div>
+</footer>
+
+<script>
+/* ── PARTICLE + CONSTELLATION SYSTEM ── */
+(function() {
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  let mouse = { x: -9999, y: -9999 };
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+  function rnd(a, b) { return Math.random() * (b - a) + a; }
+
+  function createParticle() {
+    return {
+      x: rnd(0, W), y: rnd(0, H),
+      r: rnd(0.3, 1.6),
+      vx: rnd(-0.12, 0.12), vy: rnd(-0.12, 0.12),
+      opacity: rnd(0.1, 0.55),
+      opacityDir: Math.random() > 0.5 ? 1 : -1,
+      opacitySpeed: rnd(0.003, 0.007),
+      color: Math.random() > 0.6 ? '#A78BFA' : '#67E8F9'
+    };
+  }
+
+  function initParticles() {
+    const count = Math.min(Math.floor((W * H) / 7000), 140);
+    particles = Array.from({ length: count }, createParticle);
+  }
+
+  function drawConnections() {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 110) {
+          const alpha = 0.12 * (1 - d / 110);
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+
+    particles.forEach(p => {
+      /* mouse repulsion */
+      const dx = p.x - mouse.x, dy = p.y - mouse.y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < 90) { p.x += (dx/d) * 0.9; p.y += (dy/d) * 0.9; }
+
+      p.x += p.vx; p.y += p.vy;
+      p.opacity += p.opacityDir * p.opacitySpeed;
+      if (p.opacity > 0.6 || p.opacity < 0.05) p.opacityDir *= -1;
+
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      const rgb = p.color === '#A78BFA' ? '167,139,250' : '103,232,249';
+      ctx.fillStyle = `rgba(${rgb},${p.opacity})`;
+      ctx.fill();
+    });
+
+    drawConnections();
+    requestAnimationFrame(tick);
+  }
+
+  initParticles();
+  tick();
+})();
+
+/* ── STAGGERED CARD ENTRANCE ── */
+(function() {
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const idx = cards.indexOf(entry.target);
+      setTimeout(() => entry.target.classList.add('visible'), idx * 110 + 200);
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.08 });
+  cards.forEach(c => io.observe(c));
+})();
+
+/* ── CURSOR TRAIL GLOW ── */
+(function() {
+  const trail = document.createElement('div');
+  Object.assign(trail.style, {
+    position: 'fixed', width: '240px', height: '240px',
+    borderRadius: '50%', pointerEvents: 'none', zIndex: '0',
+    background: 'radial-gradient(circle, rgba(139,92,246,.07) 0%, transparent 70%)',
+    transform: 'translate(-50%,-50%)',
+    transition: 'left .12s ease, top .12s ease'
+  });
+  document.body.appendChild(trail);
+  window.addEventListener('mousemove', e => {
+    trail.style.left = e.clientX + 'px';
+    trail.style.top  = e.clientY + 'px';
+  });
+})();
+</script>
+</body>
+</html>
